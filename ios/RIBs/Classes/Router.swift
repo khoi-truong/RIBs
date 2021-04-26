@@ -21,6 +21,18 @@ public enum RouterLifecycle {
 
     /// Router did load.
     case didLoad
+    
+    /// Router will attach child
+    case willAttachChild(Routing)
+    
+    /// Router did attach child
+    case didAttachChild(Routing)
+    
+    /// Router will detach child
+    case willDetachChild(Routing)
+
+    /// Router did detach child
+    case didDetachChild(Routing)
 }
 
 /// The scope of a `Router`, defining various lifecycles of a `Router`.
@@ -132,6 +144,8 @@ open class Router<InteractorType>: Routing {
     /// - parameter child: The child `Router` to attach.
     public final func attachChild(_ child: Routing) {
         assert(!(children.contains { $0 === child }), "Attempt to attach child: \(child), which is already attached to \(self).")
+        
+        lifecycleSubject.onNext(.willAttachChild(child))
 
         children.append(child)
 
@@ -139,15 +153,20 @@ open class Router<InteractorType>: Routing {
         // We need to make sure the RIB is activated before letting it attach immutable children.
         child.interactable.activate()
         child.load()
+        
+        lifecycleSubject.onNext(.didAttachChild(child))
     }
 
     /// Detaches the given `Router` from the tree.
     ///
     /// - parameter child: The child `Router` to detach.
     public final func detachChild(_ child: Routing) {
-        child.interactable.deactivate()
+        lifecycleSubject.onNext(.willDetachChild(child))
 
+        child.interactable.deactivate()
         children.removeElementByReference(child)
+        
+        lifecycleSubject.onNext(.didDetachChild(child))
     }
 
     // MARK: - Internal

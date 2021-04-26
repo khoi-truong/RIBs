@@ -127,7 +127,7 @@ final class TicTacToeInteractor: PresentableInteractor<TicTacToePresentable>, Ti
             }
         }
 
-        // Diagonal.
+        // Diagnals.
         guard let p11 = board[1][1] else {
             return nil
         }

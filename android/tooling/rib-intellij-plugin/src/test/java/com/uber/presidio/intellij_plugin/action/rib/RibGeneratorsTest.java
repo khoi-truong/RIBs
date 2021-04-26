@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.uber.presidio.intellij_plugin.action.rib;
-
-import static com.google.common.truth.Truth.assert_;
-import static com.google.testing.compile.JavaSourcesSubjectFactory.javaSources;
+ package com.uber.presidio.intellij_plugin.action.rib;
 
 import androidx.annotation.NonNull;
+
 import com.google.testing.compile.JavaFileObjects;
 import com.uber.presidio.intellij_plugin.generator.Generator;
 import com.uber.presidio.intellij_plugin.generator.GeneratorPair;
 import com.uber.rib.compiler.RibTestProcessor;
-import dagger.internal.codegen.ComponentProcessor;
-import java.util.ArrayList;
-import java.util.List;
-import javax.tools.JavaFileObject;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.tools.JavaFileObject;
+
+import dagger.internal.codegen.ComponentProcessor;
+
+import static com.google.common.truth.Truth.assert_;
+import static com.google.testing.compile.JavaSourcesSubjectFactory.javaSources;
 
 public class RibGeneratorsTest {
 
@@ -37,19 +42,14 @@ public class RibGeneratorsTest {
 
   @Test
   public void ribGenerators_shouldGenerateClassesThatCompiler() {
-    testWithGenerators(
-        Generators.getGeneratorsForRibWithoutPresenterAndView(
-            TEST_PACKAGE_NAME, TEST_RIBLET_NAME, false));
+    testWithGenerators(Generators.getGeneratorsForRibWithoutPresenterAndView(TEST_PACKAGE_NAME, TEST_RIBLET_NAME, false));
   }
 
   @Test
-  @Ignore(
-      "This test only passes when using buck+okbuck. Gradle is unable to import the rib-android aar as a test "
-          + "dependency for this java module.")
+  @Ignore("This test only passes when using buck+okbuck. Gradle is unable to import the rib-android aar as a test "
+      + "dependency for this java module.")
   public void viewRibGenerators_shouldGenerateClassesThatCompile() {
-    testWithGenerators(
-        Generators.getGeneratorsForRibWithPresenterAndView(
-            TEST_PACKAGE_NAME, TEST_RIBLET_NAME, false));
+    testWithGenerators(Generators.getGeneratorsForRibWithPresenterAndView(TEST_PACKAGE_NAME, TEST_RIBLET_NAME, false));
   }
 
   private static void testWithGenerators(@NonNull GeneratorPair generators) {
@@ -59,19 +59,19 @@ public class RibGeneratorsTest {
     generateSourceFiles(javaFileObjects, generators.getTestSourceSetGenerators());
 
     assert_()
-        .about(javaSources())
-        .that(javaFileObjects)
-        .processedWith(new ComponentProcessor(), new RibTestProcessor())
-        .compilesWithoutError();
+            .about(javaSources())
+            .that(javaFileObjects)
+            .processedWith(new ComponentProcessor(), new RibTestProcessor())
+            .compilesWithoutError();
   }
 
   private static void generateSourceFiles(
-      List<JavaFileObject> javaFileObjects, List<Generator> generators) {
+          List<JavaFileObject> javaFileObjects, List<Generator> generators) {
     for (Generator generator : generators) {
       javaFileObjects.add(
-          JavaFileObjects.forSourceString(
-              String.format("%s.%s", generator.getPackageName(), generator.getClassName()),
-              generator.generate()));
+              JavaFileObjects.forSourceString(
+                      String.format("%s.%s", generator.getPackageName(), generator.getClassName()),
+                      generator.generate()));
     }
   }
 }
